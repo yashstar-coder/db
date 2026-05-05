@@ -1,0 +1,137 @@
+
+DROP TABLE Employee CASCADE CONSTRAINTS;
+DROP TABLE Works CASCADE CONSTRAINTS;
+DROP TABLE Company CASCADE CONSTRAINTS;
+DROP TABLE Manages CASCADE CONSTRAINTS;
+DROP TABLE HighEarners CASCADE CONSTRAINTS;
+
+
+
+CREATE TABLE Employee (
+    employee_name VARCHAR2(50) PRIMARY KEY,
+    street VARCHAR2(50),
+    city VARCHAR2(50)
+);
+
+CREATE TABLE Company (
+    company_name VARCHAR2(50) PRIMARY KEY,
+    city VARCHAR2(50) NOT NULL
+);
+
+CREATE TABLE Works (
+    employee_name VARCHAR2(50),
+    company_name VARCHAR2(50),
+    salary NUMBER(10,2),
+    PRIMARY KEY (employee_name)
+    );
+
+CREATE TABLE Manages (
+    employee_name VARCHAR2(50),
+    manager_name VARCHAR2(50),
+    PRIMARY KEY (employee_name)
+);
+
+
+-- Employee
+INSERT INTO Employee VALUES ('Nilesh','MG Road','Mumbai');
+INSERT INTO Employee VALUES ('Amit','FC Road','Pune');
+INSERT INTO Employee VALUES ('Sneha','College Road','Nashik');
+INSERT INTO Employee VALUES ('Ravi','Station Road','Nagpur');
+INSERT INTO Employee VALUES ('Neha','Main Road','Mumbai');
+
+-- Company
+INSERT INTO Company VALUES ('First Bank Corporation','Mumbai');
+INSERT INTO Company VALUES ('Small Bank Corporation','Pune');
+INSERT INTO Company VALUES ('Tech Solutions','Bangalore');
+INSERT INTO Company VALUES ('Global Corp','Gotham');
+
+-- Works
+INSERT INTO Works VALUES ('Nilesh','First Bank Corporation',12000);
+INSERT INTO Works VALUES ('Amit','Small Bank Corporation',8000);
+INSERT INTO Works VALUES ('Sneha','First Bank Corporation',15000);
+INSERT INTO Works VALUES ('Ravi','Tech Solutions',7000);
+INSERT INTO Works VALUES ('Neha','Global Corp',9000);
+
+-- Manages
+INSERT INTO Manages VALUES ('Nilesh','Amit');
+INSERT INTO Manages VALUES ('Sneha','Nilesh');
+INSERT INTO Manages VALUES ('Ravi','Amit');
+
+COMMIT;
+
+
+SELECT e.employee_name
+FROM Employee e
+JOIN Works w ON e.employee_name = w.employee_name
+WHERE w.company_name = 'First Bank Corporation';
+
+
+SELECT e.employee_name, e.city
+FROM Employee e
+JOIN Works w ON e.employee_name = w.employee_name
+WHERE w.company_name = 'First Bank Corporation';
+
+
+SELECT e.employee_name, e.street, e.city
+FROM Employee e
+JOIN Works w ON e.employee_name = w.employee_name
+WHERE w.company_name = 'First Bank Corporation'
+AND w.salary > 10000;
+
+SELECT e.employee_name
+FROM Employee e
+JOIN Works w ON e.employee_name = w.employee_name
+WHERE w.salary > ALL (
+    SELECT salary FROM Works
+    WHERE company_name = 'Small Bank Corporation'
+);
+
+
+
+SELECT w.employee_name, w.salary
+FROM Works w
+WHERE w.salary > (
+    SELECT AVG(w2.salary)
+    FROM Works w2
+    WHERE w2.company_name = w.company_name
+);
+
+
+
+SELECT company_name
+FROM Works
+GROUP BY company_name
+HAVING SUM(salary) = (
+    SELECT MIN(SUM(salary))
+    FROM Works
+    GROUP BY company_name
+);
+
+
+SELECT company_name
+FROM Works
+GROUP BY company_name
+HAVING AVG(salary) > (
+    SELECT AVG(salary)
+    FROM Works
+    WHERE company_name = 'First Bank Corporation'
+);
+
+
+
+UPDATE Works
+SET salary = salary * 1.10
+WHERE company_name = 'First Bank Corporation';
+
+
+
+CREATE TABLE HighEarners (
+    employee_name VARCHAR2(50),
+    salary NUMBER(10,2)
+);
+
+INSERT INTO HighEarners
+SELECT employee_name, salary
+FROM Works
+WHERE salary > (SELECT AVG(salary) FROM Works);
+

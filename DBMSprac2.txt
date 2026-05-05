@@ -1,0 +1,94 @@
+DROP TABLE Department CASCADE CONSTRAINTS;
+DROP TABLE employee CASCADE CONSTRAINTS;
+
+
+CREATE TABLE Department (
+    Deptno NUMBER(5) PRIMARY KEY,
+    Dname VARCHAR2(30) NOT NULL,
+    Location VARCHAR2(30)
+);
+
+INSERT INTO Department VALUES (10, 'Accounting', 'Mumbai');
+INSERT INTO Department VALUES (20, 'Research', 'Pune');
+INSERT INTO Department VALUES (30, 'Sales', 'Nashik');
+INSERT INTO Department VALUES (40, 'Operations', 'Nagpur');
+
+COMMIT;
+
+CREATE TABLE Employee (
+    Empno NUMBER(5) PRIMARY KEY,
+    Ename VARCHAR2(50) NOT NULL,
+    Job VARCHAR2(30),
+    Mgr NUMBER(5),
+    Joined_date DATE,
+    Salary NUMBER(10,2),
+    Commission NUMBER(10,2),
+    Deptno NUMBER(5),
+    Address VARCHAR2(50),
+    FOREIGN KEY (Deptno) REFERENCES Department(Deptno)
+);
+
+INSERT INTO Employee VALUES (1001,'Nilesh Joshi','Clerk',1005,TO_DATE('17-DEC-1995','DD-MON-YYYY'),2800,600,20,'Nashik');
+
+INSERT INTO Employee VALUES (1002,'Avinash Pawar','Salesman',1003,TO_DATE('20-FEB-1996','DD-MON-YYYY'),5000,1200,30,'Nagpur');
+
+INSERT INTO Employee VALUES (1003,'Amit Kumar','Manager',1004,TO_DATE('02-APR-1986','DD-MON-YYYY'),2000,NULL,30,'Pune');
+
+INSERT INTO Employee VALUES (1004,'Nitin Kulkarni','President',NULL,TO_DATE('19-APR-1986','DD-MON-YYYY'),50000,NULL,10,'Mumbai');
+
+INSERT INTO Employee VALUES (1005,'Niraj Sharma','Analyst',1003,TO_DATE('03-DEC-1998','DD-MON-YYYY'),12000,NULL,20,'Satara');
+
+INSERT INTO Employee VALUES (1006,'Pushkar Deshpande','Salesman',1003,TO_DATE('01-SEP-1996','DD-MON-YYYY'),6500,1500,30,'Pune');
+
+INSERT INTO Employee VALUES (1007,'Sumit Patil','Manager',1004,TO_DATE('01-MAY-1991','DD-MON-YYYY'),25000,NULL,20,'Mumbai');
+
+INSERT INTO Employee VALUES (1008,'Ravi Sawant','Analyst',1007,TO_DATE('17-NOV-1995','DD-MON-YYYY'),10000,NULL,NULL,'Amaravati');
+
+COMMIT;
+
+SELECT Empno, Ename, Job, Mgr, Joined_date, Salary, Commission, Deptno, Address 
+FROM Employee;
+
+SELECT DISTINCT Job FROM Employee;
+
+UPDATE Department
+SET Location = 'Bangalore'
+WHERE Deptno = 40;
+
+
+
+UPDATE Employee
+SET Ename = 'Nikhil Gosavi'
+WHERE Empno = 1003;
+
+DELETE FROM Employee
+WHERE Ename = 'Pushkar Deshpande';
+
+-- Using OR
+SELECT * FROM Employee
+WHERE Job = 'Manager' OR Job = 'Analyst';
+
+-- Using IN
+SELECT * FROM Employee
+WHERE Job IN ('Manager','Analyst');
+
+SELECT Ename, Deptno 
+FROM Employee
+WHERE Deptno IN (10,20,30,40);
+
+
+
+SELECT Ename, Joined_date
+FROM Employee
+WHERE Ename LIKE 'A%';
+
+SELECT Ename
+FROM Employee
+WHERE Ename LIKE '_i%';
+
+
+
+SELECT Deptno, MAX(Salary)
+FROM Employee
+GROUP BY Deptno
+HAVING MAX(Salary) > 5000;

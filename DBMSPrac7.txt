@@ -1,0 +1,65 @@
+CREATE TABLE Stud_Marks (
+    Roll NUMBER PRIMARY KEY,
+    Name VARCHAR2(50),
+    Total_marks NUMBER
+);
+
+CREATE TABLE Result (
+    Roll NUMBER,
+    Name VARCHAR2(50),
+    Class VARCHAR2(30)
+);
+
+
+INSERT INTO Stud_Marks VALUES (1, 'Arjun', 1200);
+INSERT INTO Stud_Marks VALUES (2, 'Sneha', 950);
+INSERT INTO Stud_Marks VALUES (3, 'Rahul', 850);
+COMMIT;
+
+CREATE OR REPLACE PROCEDURE proc_Grade (p_roll IN NUMBER) AS
+    v_name Stud_Marks.Name%TYPE;
+    v_marks Stud_Marks.Total_marks%TYPE;
+    v_class VARCHAR2(30);
+BEGIN
+   
+    SELECT Name, Total_marks INTO v_name, v_marks 
+    FROM Stud_Marks 
+    WHERE Roll = p_roll;
+
+   
+    IF v_marks >= 990 AND v_marks <= 1500 THEN
+        v_class := 'Distinction';
+    ELSIF v_marks >= 900 AND v_marks <= 989 THEN
+        v_class := 'First Class';
+    ELSIF v_marks >= 825 AND v_marks <= 899 THEN
+        v_class := 'Higher Second Class';
+    ELSE
+        v_class := 'Pass Class/Fail';
+    END IF;
+
+
+    INSERT INTO Result (Roll, Name, Class) 
+    VALUES (p_roll, v_name, v_class);
+    
+    DBMS_OUTPUT.PUT_LINE('Processed: ' || v_name || ' | Category: ' || v_class);
+    
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Error: Roll Number ' || p_roll || ' not found.');
+END;
+/
+
+SET SERVEROUTPUT ON;
+
+DECLARE
+  
+    CURSOR c_students IS SELECT Roll FROM Stud_Marks;
+BEGIN
+    FOR rec IN c_students LOOP
+        proc_Grade(rec.Roll);
+    END LOOP;
+    COMMIT;
+END;
+/
+
+SELECT * FROM Result;
