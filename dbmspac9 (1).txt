@@ -1,0 +1,42 @@
+use Employee
+
+db.createCollection("emp1")
+
+db.emp1.insertMany([
+  { eno: 101, ename: "Nitin", address: "Pune", sal: 12000 },
+  { eno: 102, ename: "Amit", address: "Mumbai", sal: 4500 },
+  { eno: 103, ename: "Neha", address: "Nashik", sal: 18000 },
+  { eno: 104, ename: "Suresh", address: "Pune", sal: 25000 },
+  { eno: 105, ename: "Rahul", address: "Nagpur", sal: 8000 }
+])
+
+db.emp1.find().pretty()
+
+db.emp1.insertOne({
+  _id: 999, 
+  eno: 106, 
+  ename: "Vijay", 
+  address: "Sangli", 
+  sal: 11000
+})
+
+db.emp1.find({ sal: { $gt: 5000 } })
+
+db.emp1.find({ sal: { $lt: 15000 } })
+
+db.emp1.find({ 
+  $and: [
+    { sal: { $gt: 10000 } }, 
+    { sal: { $lt: 20000 } }
+  ] 
+})
+
+db.emp1.updateMany({}, { $mul: { sal: 1.1 } })
+
+db.emp1.deleteMany({ sal: { $lt: 5000 } })
+
+db.emp1.renameCollection("employee1")
+
+db.employee1.find({ ename: { $regex: /^n/i } })
+
+db.employee1.find().sort({ ename: 1 })

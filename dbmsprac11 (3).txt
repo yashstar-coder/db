@@ -1,0 +1,32 @@
+use Restaurants;
+
+db.REST1.insertMany([
+  { "restaurant_id": "3001", "name": "The Spice Route", "address": { "building": "12", "street": "MG Road", "city": "Pune", "zipcode": "411001" }, "cuisine_type": "Indian", "score": 82 },
+  { "restaurant_id": "3002", "name": "Pasta Bella", "address": { "building": "5A", "street": "Main St", "city": "Mumbai", "zipcode": "400001" }, "cuisine_type": "Italian", "score": 95 },
+  { "restaurant_id": "3003", "name": "Sushi Zen", "address": { "building": "99", "street": "Park Lane", "city": "Bangalore", "zipcode": "560001" }, "cuisine_type": "Japanese", "score": 75 },
+  { "restaurant_id": "3004", "name": "Curry House", "address": { "building": "22", "street": "Linking Rd", "city": "Mumbai", "zipcode": "400050" }, "cuisine_type": "Indian", "score": 88 }
+]);
+
+db.REST1.find().pretty();
+
+db.REST1.find(
+  {}, 
+  { "restaurant_id": 1, "name": 1, "address.city": 1, "address.zipcode": 1, "_id": 0 }
+);
+
+db.REST1.find({ "score": { $gt: 80, $lt: 100 } });
+
+db.REST1.updateOne(
+  { "restaurant_id": "3001" },
+  { $set: { "score": 90 } }
+);
+
+db.REST1.updateMany(
+  { "cuisine_type": "Indian" },
+  { $set: { "cuisine_type": "Indian_Zatka" } }
+);
+
+db.REST1.deleteOne({ "restaurant_id": "3003" });
+
+db.REST1.deleteMany({ "score": { $lt: 85 } });
+
