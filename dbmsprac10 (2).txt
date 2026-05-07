@@ -1,0 +1,123 @@
+use LibraryStoreDB
+
+db.Books.insertMany([
+{
+    book_id: 1,
+    book_title: "MongoDB Basics",
+    author_name: "Amit Shah",
+    publish_year: 2018
+},
+{
+    book_id: 2,
+    book_title: "Advanced MongoDB",
+    author_name: "Amit Shah",
+    publish_year: 2020
+},
+{
+    book_id: 3,
+    book_title: "Database Systems",
+    author_name: "Riya Patel",
+    publish_year: 2016
+},
+{
+    book_id: 4,
+    book_title: "Web Development",
+    author_name: "John Smith",
+    publish_year: 2014
+}
+])
+
+
+db.Products.insertMany([
+{
+    product_id: 101,
+    name: "Laptop",
+    price: 55000
+},
+{
+    product_id: 102,
+    name: "Mobile",
+    price: 25000
+},
+{
+    product_id: 103,
+    name: "Tablet",
+    price: 18000
+},
+{
+    product_id: 104,
+    name: "Smart Watch",
+    price: 12000
+}
+])
+
+
+db.Products.createIndex({ price: 1 })
+
+db.Books.createIndex({ author_name: 1, publish_year: 1 })
+
+
+db.Books.getIndexes()
+
+db.Products.getIndexes()
+
+db.Products.getIndexes()
+
+db.Products.dropIndex({ price: 1 })
+
+db.Books.aggregate([
+{
+    $group: {
+        _id: "$author_name",
+        total_books: { $sum: 1 }
+    }
+}
+])
+
+db.Products.aggregate([
+{
+    $group: {
+        _id: null,
+        average_price: { $avg: "$price" }
+    }
+}
+])
+
+db.Products.aggregate([
+{
+    $group: {
+        _id: null,
+        maximum_price: { $max: "$price" },
+        minimum_price: { $min: "$price" }
+    }
+}
+])
+
+
+db.Books.aggregate([
+{
+    $match: {
+        publish_year: { $gt: 2015 }
+    }
+},
+{
+    $count: "Total_Books"
+}
+])
+
+
+
+db.Books.aggregate([
+{
+    $project: {
+        _id: 0,
+        book_title: 1,
+        author_name: 1
+    }
+}
+])
+
+
+db.Books.find().sort({ publish_year: 1 })
+
+db.Books.find().sort({ publish_year: -1 })
