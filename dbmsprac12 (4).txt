@@ -1,0 +1,59 @@
+// Switch to database
+use School;
+
+// Insert Sample Documents
+db.Student.insertMany([
+  { 
+    "student_id": 101, "name": "Alice", "age": 19, "gender": "Female", 
+    "marks": { "math": 95, "science": 88, "english": 82 } 
+  },
+  { 
+    "student_id": 102, "name": "Bob", "age": 21, "gender": "Male", 
+    "marks": { "math": 65, "science": 92, "english": 78 } 
+  },
+  { 
+    "student_id": 103, "name": "Charlie", "age": 20, "gender": "Male", 
+    "marks": { "math": 92, "science": 85, "english": 88 } 
+  },
+  { 
+    "student_id": 104, "name": "Diana", "age": 22, "gender": "Female", 
+    "marks": { "math": 70, "science": 72, "english": 95 } 
+  }
+]);
+
+db.Student.find({ "gender": "Male" });
+
+db.Student.find({ "marks.math": { $gt: 90 } });
+
+db.Student.find({ "age": { $gte: 20 } });
+
+db.Student.find({ "marks.english": { $gte: 80, $lte: 90 } });
+
+db.Student.countDocuments({ "gender": "Female" });
+
+db.Student.find().sort({ "marks.science": -1 }).limit(1);
+
+db.Student.updateOne(
+  { "name": "Bob" },
+  { $set: { "marks.math": 75 } }
+);
+
+db.Student.deleteMany({ "marks.math": { $lt: 70 } });
+
+db.Student.aggregate([
+  {
+    $group: {
+      _id: null,
+      averageScience: { $avg: "$marks.science" }
+    }
+  }
+]);
+
+db.Student.find({
+  $or: [
+    { "marks.math": { $gt: 80 } },
+    { "marks.science": { $gt: 80 } },
+    { "marks.english": { $gt: 80 } }
+  ]
+}).count();
+ 	 
